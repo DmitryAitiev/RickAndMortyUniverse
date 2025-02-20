@@ -2,9 +2,11 @@ package com.example.rickandmortyuniverse.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.example.rickandmortyuniverse.data.repository.EpisodesListRepositoryImpl
 import com.example.rickandmortyuniverse.data.repository.RepositoryProvider
 import com.example.rickandmortyuniverse.domain.repository.EpisodesListRepository
+import com.example.rickandmortyuniverse.domain.usecases.GetEpisodesFlowUseCase
 import com.example.rickandmortyuniverse.domain.usecases.GetListEpisodesUseCase
 import com.example.rickandmortyuniverse.domain.usecases.LoadNextDataUseCase
 import com.example.rickandmortyuniverse.extensions.mergeWith
@@ -25,13 +27,14 @@ class ListEpisodeViewModel(
 
     private val getListEpisodesUseCase = GetListEpisodesUseCase(repository)
     private val loadNextDataUseCase = LoadNextDataUseCase(repository)
+    private val getEpisodeFlowUseCase = GetEpisodesFlowUseCase(repository)
 
     private val episodesFlow = getListEpisodesUseCase()
 
     private val loadNextDataFlow = MutableSharedFlow<ListEpisodesScreenState>()
 
-    //private val isLoadingNextPage = MutableStateFlow(false)
-
+    val episodesPagingFlow = getEpisodeFlowUseCase()
+        .cachedIn(viewModelScope)
 
     val screenState = episodesFlow
         .filter { it.isNotEmpty() }

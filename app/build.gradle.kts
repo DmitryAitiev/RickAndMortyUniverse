@@ -64,4 +64,6 @@ dependencies {
     implementation(libs.okHttpClient)
     implementation(libs.retrofit)
     implementation(libs.httpLoggingInterceptor)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
 }
