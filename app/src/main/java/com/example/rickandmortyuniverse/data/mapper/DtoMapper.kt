@@ -5,8 +5,9 @@ import com.example.rickandmortyuniverse.data.model.EpisodesInfoResponseDto
 import com.example.rickandmortyuniverse.data.model.EpisodesListResponseDto
 import com.example.rickandmortyuniverse.domain.entity.Character
 import com.example.rickandmortyuniverse.domain.entity.Episode
+import javax.inject.Inject
 
-class DtoMapper {
+class DtoMapper @Inject constructor() {
 
     fun mapResponseToEpisode(responseDto: EpisodesInfoResponseDto): List<Episode> {
         val result = mutableListOf<Episode>()

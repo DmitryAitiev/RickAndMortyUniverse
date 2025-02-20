@@ -1,24 +1,29 @@
 [versions]
-agp = "8.7.2"
-kotlin = "2.0.0"
+agp = "8.7.3"
+hiltAndroid = "2.51.1"
+kotlin = "2.1.10"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
-composeBom = "2024.04.01"
-navigation_version = "2.8.6"
+composeBom = "2025.02.00"
+navigation_version = "2.8.7"
 gson_version="2.11.0"
 coil_version="3.0.4"
 okHttpClient_version="4.12.0"
 pagingRuntime = "3.3.6"
 retrofit_version="2.11.0"
+ksp_version ="2.1.10-1.0.29"
+dagger2_version = "2.55"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingRuntime" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -40,10 +45,14 @@ coil-network = {group = "io.coil-kt.coil3", name = "coil-network-okhttp", versio
 okHttpClient = {group = "com.squareup.okhttp3", name = "okhttp", version.ref ="okHttpClient_version"}
 httpLoggingInterceptor = {group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref ="okHttpClient_version"}
 retrofit = {group = "com.squareup.retrofit2", name = "retrofit", version.ref ="retrofit_version"}
+dagger2 = { group = "com.google.dagger", name = "dagger", version.ref = "dagger2_version" }
+dagger2-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger2_version" }
+dagger2-android-processor = { group = "com.google.dagger", name = "dagger-android-processor", version.ref = "dagger2_version" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+ksp = {id = "com.google.devtools.ksp", version.ref ="ksp_version"}
+hilt = {id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid"}

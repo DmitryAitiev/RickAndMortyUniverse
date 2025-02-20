@@ -10,7 +10,7 @@ import com.example.rickandmortyuniverse.domain.usecases.GetListCharactersUseCase
 import kotlinx.coroutines.flow.map
 
 class CharactersScreenViewModel(
-    episodeId: Int,
+    val episodeId: Int,
     private val repository: EpisodesListRepository = RepositoryProvider.episodeRepository
 ): ViewModel() {
 

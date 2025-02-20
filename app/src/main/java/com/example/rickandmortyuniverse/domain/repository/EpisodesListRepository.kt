@@ -15,5 +15,4 @@ interface EpisodesListRepository {
     fun getEpisode(episodeId: Int): Episode
 
     fun getEpisodesFlow(): Flow<PagingData<Episode>>
-    suspend fun loadNextData()
 }
