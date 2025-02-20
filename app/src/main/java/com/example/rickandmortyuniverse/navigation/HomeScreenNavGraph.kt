@@ -25,11 +25,11 @@ fun NavGraphBuilder.homeScreenNavGraph(
             route = Screen.CharacterList.route,
             arguments = listOf(
                 navArgument(Screen.KEY_EPISODE_CARD) {
-                    type = NavType.StringType
+                    type = NavType.IntType
                 }
             )
         ) {
-            val episodeId = it.arguments?.getString(Screen.KEY_EPISODE_CARD) ?: throw RuntimeException("Args is null")
-            charactersScreenContent(episodeId.toInt())       }
+            val episodeId = it.arguments?.getInt(Screen.KEY_EPISODE_CARD) ?: throw RuntimeException("Args is null")
+            charactersScreenContent(episodeId)       }
     }
 }

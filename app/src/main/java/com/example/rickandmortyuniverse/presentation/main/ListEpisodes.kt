@@ -42,6 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -53,8 +54,9 @@ fun ListEpisodesScreen(
     paddingValues: PaddingValues,
     onCardClickListener: (episode: Episode) -> Unit,
 ) {
-    val viewModel: ListEpisodeViewModel = viewModel()
+    val viewModel: ListEpisodeViewModel = hiltViewModel()
     val screenState by viewModel.screenState.collectAsState(ListEpisodesScreenState.Initial)
+    Log.d("ListEpisodesScreen", "ScreenState: $screenState")
 
     if (screenState != ListEpisodesScreenState.Initial) {
         BottomSheetContent(
@@ -99,7 +101,7 @@ fun ListEpisodes(
         }
         pagingItems.apply {
             when {
-                loadState.append is LoadState.Loading -> {
+                loadState.refresh is LoadState.Loading -> {
                     item {
                         Box(
                             modifier = Modifier
@@ -148,16 +150,7 @@ fun BottomSheetContent(
                     onCardClickListener = onCardClickListener,
                     viewModel = viewModel,
                 )
-                is ListEpisodesScreenState.Loading ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                            .height(150.dp)
-                        , contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = Color.Black)
-                    }
+                is ListEpisodesScreenState.Loading -> {}
                 is ListEpisodesScreenState.Initial -> {}
             }
         },

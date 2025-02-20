@@ -72,5 +72,6 @@ dependencies {
     //ksp(libs.dagger2.compiler)
     //ksp(libs.dagger2.android.processor)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
 }

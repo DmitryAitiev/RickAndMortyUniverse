@@ -4,7 +4,6 @@ import android.content.Context
 import com.example.rickandmortyuniverse.data.network.ApiFactory
 import com.example.rickandmortyuniverse.data.network.ApiService
 import com.example.rickandmortyuniverse.data.repository.EpisodesListRepositoryImpl
-import com.example.rickandmortyuniverse.data.repository.RepositoryProvider
 import com.example.rickandmortyuniverse.domain.repository.EpisodesListRepository
 import dagger.Binds
 import dagger.Module
@@ -18,9 +17,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 interface DataModule{
 
+    @Singleton
     @Binds
     fun bindRepository(repositoryImpl: EpisodesListRepositoryImpl): EpisodesListRepository
-
     companion object {
         @Singleton
         @Provides

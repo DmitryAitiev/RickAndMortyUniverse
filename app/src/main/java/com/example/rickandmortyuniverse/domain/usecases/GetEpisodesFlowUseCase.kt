@@ -6,8 +6,9 @@ import com.example.rickandmortyuniverse.domain.entity.Episode
 import com.example.rickandmortyuniverse.domain.repository.EpisodesListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class GetEpisodesFlowUseCase(
+class GetEpisodesFlowUseCase @Inject constructor(
     private val repository: EpisodesListRepository
 ) {
     operator fun invoke(): Flow<PagingData<Episode>> {

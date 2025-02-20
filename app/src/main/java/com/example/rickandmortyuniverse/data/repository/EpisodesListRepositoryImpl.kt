@@ -33,13 +33,10 @@ class EpisodesListRepositoryImpl @Inject constructor(
     private val mapper: DtoMapper
 ): EpisodesListRepository {
 
-    private val apiService: ApiService = ApiFactory.apiService
-    private val mapper = DtoMapper()
-
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val _episodeCache = MutableStateFlow<List<Episode>>(emptyList())
-    val episodeCache: StateFlow<List<Episode>> = _episodeCache
+    private val episodeCache: StateFlow<List<Episode>> = _episodeCache
 
     override fun getListCharacters(episode: Episode): StateFlow<List<Character>> = flow {
         val idList = episode.character.map { url ->

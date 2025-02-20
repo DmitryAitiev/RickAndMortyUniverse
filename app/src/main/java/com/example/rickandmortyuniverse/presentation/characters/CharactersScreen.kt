@@ -47,10 +47,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.rickandmortyuniverse.domain.entity.Character
-import com.example.rickandmortyuniverse.domain.entity.Episode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,11 +57,7 @@ fun CharactersScreen(
     onBackPressed: () -> Unit,
     episodeId: Int
 ) {
-    val viewModel: CharactersScreenViewModel = viewModel(
-        factory = CharactersViewModelFactory(
-            episodeId = episodeId
-        )
-    )
+    val viewModel: CharactersScreenViewModel = hiltViewModel()
     val screenState= viewModel.screenState.collectAsState(CharacterScreenState.Initial)
     val currentState = screenState.value
 

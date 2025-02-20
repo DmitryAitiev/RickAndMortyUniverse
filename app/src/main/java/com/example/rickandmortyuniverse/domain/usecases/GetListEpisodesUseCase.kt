@@ -4,8 +4,9 @@ import com.example.rickandmortyuniverse.data.repository.EpisodesListRepositoryIm
 import com.example.rickandmortyuniverse.domain.entity.Episode
 import com.example.rickandmortyuniverse.domain.repository.EpisodesListRepository
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class GetListEpisodesUseCase(
+class GetListEpisodesUseCase @Inject constructor(
     private val repository: EpisodesListRepository
 ) {
 

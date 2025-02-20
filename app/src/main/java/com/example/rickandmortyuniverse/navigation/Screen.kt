@@ -17,7 +17,7 @@ sealed class Screen(val route: String) {
     }
 
     companion object {
-        const val KEY_EPISODE_CARD = "episode"
+        const val KEY_EPISODE_CARD = "episodeId"
 
         const val ROUTE_EPISODE_LIST = "episode_list"
         const val ROUTE_HOME = "home"
