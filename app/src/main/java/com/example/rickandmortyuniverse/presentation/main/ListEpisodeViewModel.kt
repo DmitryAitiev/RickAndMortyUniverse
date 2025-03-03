@@ -7,8 +7,10 @@ import com.example.rickandmortyuniverse.data.repository.EpisodesListRepositoryIm
 import com.example.rickandmortyuniverse.domain.repository.EpisodesListRepository
 import com.example.rickandmortyuniverse.domain.usecases.GetEpisodesFlowUseCase
 import com.example.rickandmortyuniverse.domain.usecases.GetListEpisodesUseCase
+import com.example.rickandmortyuniverse.presentation.characters.CharacterScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -27,6 +29,9 @@ class ListEpisodeViewModel @Inject constructor(
 
     val screenState = getListEpisodesUseCase()
         .map { ListEpisodesScreenState.EpisodesState as ListEpisodesScreenState }
-        .onStart { emit(ListEpisodesScreenState.Loading)
-        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ListEpisodesScreenState.Loading
+        )
 }

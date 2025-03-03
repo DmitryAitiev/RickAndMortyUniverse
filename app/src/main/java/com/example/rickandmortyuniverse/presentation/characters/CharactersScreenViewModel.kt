@@ -2,14 +2,17 @@ package com.example.rickandmortyuniverse.presentation.characters
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.rickandmortyuniverse.data.repository.EpisodesListRepositoryImpl
 import com.example.rickandmortyuniverse.domain.entity.Episode
 import com.example.rickandmortyuniverse.domain.repository.EpisodesListRepository
 import com.example.rickandmortyuniverse.domain.usecases.GetEpisodeById
 import com.example.rickandmortyuniverse.domain.usecases.GetListCharactersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,5 +35,9 @@ class CharactersScreenViewModel @Inject constructor(
                 characters = it
             ) as CharacterScreenState
         }
-        .onStart { emit(CharacterScreenState.Loading) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = CharacterScreenState.Loading
+        )
 }

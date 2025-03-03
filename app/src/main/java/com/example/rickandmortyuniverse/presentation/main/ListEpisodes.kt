@@ -48,22 +48,27 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.rickandmortyuniverse.R
 import com.example.rickandmortyuniverse.domain.entity.Episode
+import com.example.rickandmortyuniverse.presentation.favourite.FavouriteEpisodesViewModel
 
 @Composable
 fun ListEpisodesScreen(
     paddingValues: PaddingValues,
-    onCardClickListener: (episode: Episode) -> Unit,
+    onCardClickListener: (episode: Episode) -> Unit
 ) {
     val viewModel: ListEpisodeViewModel = hiltViewModel()
+    val favouriteViewModel: FavouriteEpisodesViewModel = hiltViewModel()
     val screenState by viewModel.screenState.collectAsState(ListEpisodesScreenState.Initial)
-    Log.d("ListEpisodesScreen", "ScreenState: $screenState")
 
     if (screenState != ListEpisodesScreenState.Initial) {
         BottomSheetContent(
             paddingValues = paddingValues,
             onCardClickListener = onCardClickListener,
+            onCardLongClickListener = {
+                favouriteViewModel.changeFavouriteStatus(it)
+            },
             viewModel = viewModel,
-            state = screenState
+            state = screenState,
+            favouriteViewModel = favouriteViewModel
         )
     }
 }
@@ -72,7 +77,9 @@ fun ListEpisodesScreen(
 fun ListEpisodes(
     paddingValues: PaddingValues,
     onCardClickListener: (episode: Episode) -> Unit,
-    viewModel: ListEpisodeViewModel
+    onCardLongClickListener: (episode: Episode) -> Unit,
+    viewModel: ListEpisodeViewModel,
+    favouriteViewModel: FavouriteEpisodesViewModel
 ) {
     val pagingItems = viewModel.episodesPagingFlow.collectAsLazyPagingItems()
     LazyColumn(
@@ -95,7 +102,11 @@ fun ListEpisodes(
                     episode = episode,
                     onCardClickListener = {
                         onCardClickListener(episode)
-                    }
+                    },
+                    onCardLongClickListener = {
+                        onCardLongClickListener(episode)
+                    },
+                    viewModel = favouriteViewModel
                 )
             }
         }
@@ -124,7 +135,9 @@ fun ListEpisodes(
 fun BottomSheetContent(
     paddingValues: PaddingValues,
     onCardClickListener: (episode: Episode) -> Unit,
+    onCardLongClickListener: (episode: Episode) -> Unit,
     viewModel: ListEpisodeViewModel,
+    favouriteViewModel: FavouriteEpisodesViewModel,
     state: ListEpisodesScreenState
 ) {
     val sheetState = rememberBottomSheetScaffoldState(
@@ -148,7 +161,9 @@ fun BottomSheetContent(
                     ListEpisodes(
                     paddingValues = paddingValues,
                     onCardClickListener = onCardClickListener,
+                    onCardLongClickListener = onCardLongClickListener,
                     viewModel = viewModel,
+                    favouriteViewModel = favouriteViewModel
                 )
                 is ListEpisodesScreenState.Loading -> {}
                 is ListEpisodesScreenState.Initial -> {}

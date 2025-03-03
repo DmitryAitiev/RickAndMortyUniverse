@@ -16,6 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.rickandmortyuniverse.navigation.AppNavGraph
 import com.example.rickandmortyuniverse.navigation.rememberNavigationState
 import com.example.rickandmortyuniverse.presentation.characters.CharactersScreen
+import com.example.rickandmortyuniverse.presentation.favourite.FavouriteScreen
 
 @Composable
 fun MainScreen() {
@@ -62,11 +63,10 @@ fun MainScreen() {
         AppNavGraph(
             navHostController = navigationState.navHostController,
             profileScreenContent = { Text("В разработке") },
-            favouriteScreenContent = {Text("В разработке")},
+            favouriteScreenContent = { FavouriteScreen(paddingValues = it) },
             charactersScreenContent = {episodeId ->
                 CharactersScreen(
-                    onBackPressed = {navigationState.navHostController.popBackStack()},
-                    episodeId = episodeId
+                    onBackPressed = {navigationState.navHostController.popBackStack()}
                 )
             },
             episodesListScreenContent = {

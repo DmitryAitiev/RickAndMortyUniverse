@@ -4,7 +4,8 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.rickandmortyuniverse.data.mapper.DtoMapper
+import com.example.rickandmortyuniverse.data.mapper.CharacterConverter
+import com.example.rickandmortyuniverse.data.mapper.EpisodeConverter
 import com.example.rickandmortyuniverse.data.model.EpisodesInfoResponseDto
 import com.example.rickandmortyuniverse.data.network.ApiFactory
 import com.example.rickandmortyuniverse.data.network.ApiService
@@ -30,13 +31,13 @@ import javax.inject.Inject
 
 class EpisodesListRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val mapper: DtoMapper
+    private val characterConverter: CharacterConverter,
+    private val episodeConverter: EpisodeConverter,
 ): EpisodesListRepository {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    private val _episodeCache = MutableStateFlow<List<Episode>>(emptyList())
-    private val episodeCache: StateFlow<List<Episode>> = _episodeCache
+    private val episodeCache = MutableStateFlow<List<Episode>>(emptyList())
 
     override fun getListCharacters(episode: Episode): StateFlow<List<Character>> = flow {
         val idList = episode.character.map { url ->
@@ -44,7 +45,7 @@ class EpisodesListRepositoryImpl @Inject constructor(
         }.joinToString(",")
 
         val characters = apiService.getCharacters(idList)
-        emit(mapper.mapResponseToCharacter(characters))
+        emit(characterConverter.mapResponseToCharacter(characters))
     }.retry {
         delay(RETRY_TIMEOUT_MILLIS)
         true
@@ -56,7 +57,7 @@ class EpisodesListRepositoryImpl @Inject constructor(
 
     override fun getEpisode(episodeId: Int): Episode {
         return episodeCache.value.firstOrNull { it.id == episodeId } ?:
-            throw NullPointerException("Hyeta s polycheniem id ne raboteaet")
+            throw NullPointerException("Can't find id")
     }
 
     override fun getEpisodesFlow(): Flow<PagingData<Episode>> {
@@ -66,8 +67,8 @@ class EpisodesListRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                EpisodePagingSource(apiService, mapper) { newEpisodes ->
-                    _episodeCache.value += newEpisodes
+                EpisodePagingSource(apiService, episodeConverter) { newEpisodes ->
+                    episodeCache.value += newEpisodes
                 }
             }
         ).flow

@@ -45,140 +45,150 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.rickandmortyuniverse.domain.entity.Character
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharactersScreen(
-    onBackPressed: () -> Unit,
-    episodeId: Int
+    onBackPressed: () -> Unit
 ) {
     val viewModel: CharactersScreenViewModel = hiltViewModel()
     val screenState= viewModel.screenState.collectAsState(CharacterScreenState.Initial)
     val currentState = screenState.value
 
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {},
-                    navigationIcon = {
-                        IconButton(onClick = onBackPressed) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null
-                            )
-                        }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
+                        )
                     }
-                )
-            }
-        ) { paddingValues ->
-            when(currentState) {
-                is CharacterScreenState.CharactersLoaded ->
-                    LazyColumn(
-                        modifier = Modifier.padding(paddingValues),
-                        contentPadding = PaddingValues(
-                            top = 16.dp,
-                            start = 8.dp,
-                            end = 8.dp,
-                            bottom = 72.dp
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        items(
-                            items = currentState.characters,
-                            key = {it.id}
-                        ) {
-                                character ->
-                            CharacterItem(character = character)
-                        }
-                    }
-                is CharacterScreenState.Loading ->
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = Color.Black)
-                    }
-                is CharacterScreenState.Initial -> {}
-            }
+                }
+            )
         }
+    ) { paddingValues ->
+        when(currentState) {
+            is CharacterScreenState.CharactersLoaded ->
+                LazyColumn(
+                    modifier = Modifier.padding(paddingValues),
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        start = 8.dp,
+                        end = 8.dp,
+                        bottom = 100.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    items(
+                        items = currentState.characters,
+                        key = {it.id}
+                    ) {
+                            character ->
+                        CharacterItem(character = character)
+                    }
+                }
+            is CharacterScreenState.Loading ->
+                Box(
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.Black)
+                }
+            is CharacterScreenState.Initial -> {}
+        }
+    }
 }
 
 @Composable
 private fun CharacterItem(character: Character) {
+    val rotate by rememberInfiniteTransition(label = "Rotation Image")
+        .animateFloat(
+            initialValue = 0f,
+            targetValue = 720f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 100000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            )
+        )
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        CharacterContent(character = character, rotate = rotate)
+    }
+}
 
-    val rotate by rememberInfiniteTransition(label = "").animateFloat(
-        initialValue = 0f,
-        targetValue = 720f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 100000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ), label = "Rotation Image"
-    )
+@Composable
+private fun CharacterContent(character: Character, rotate: Float) {
     val cardBackground = Brush.linearGradient(
         colors = listOf(
             MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
             MaterialTheme.colorScheme.surface
         )
     )
-    ElevatedCard(
+
+    Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+            .background(cardBackground)
+            .padding(16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .background(cardBackground)
-                .padding(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AsyncImage(
-                    model = character.image,
-                    contentDescription = "Character avatar",
-                    modifier = Modifier
-                        .rotate(rotate)
-                        .size(72.dp)
-                        .clip(CircleShape)
-                )
+        CharacterImage(imageUrl = character.image, rotate = rotate)
+        Spacer(modifier = Modifier.width(16.dp))
+        CharacterInfo(name = character.name, liveStatus = character.liveStatus)
+    }
+}
 
-                Spacer(modifier = Modifier.width(16.dp))
+@Composable
+private fun CharacterImage(imageUrl: String, rotate: Float) {
+    AsyncImage(
+        model = imageUrl,
+        contentDescription = null,
+        modifier = Modifier
+            .rotate(rotate)
+            .size(72.dp)
+            .clip(CircleShape)
+    )
+}
 
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp)
-                ) {
-                    Text(
-                        text = character.name,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = character.liveStatus,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontSize = 16.sp,
-                            color = when (character.liveStatus) {
-                                "Alive" -> Color(0xFF4CAF50)
-                                "Dead" -> Color.Red
-                                else -> MaterialTheme.colorScheme.onSurface
-                            },
-                            fontWeight = FontWeight.Medium
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-        }
+@Composable
+private fun CharacterInfo(name: String, liveStatus: String) {
+    Column(
+        modifier = Modifier.padding(end = 8.dp)
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = liveStatus,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontSize = 16.sp,
+                color = when (liveStatus) {
+                    "Alive" -> Color(0xFF4CAF50)
+                    "Dead" -> Color.Red
+                    else -> MaterialTheme.colorScheme.onSurface
+                },
+                fontWeight = FontWeight.Medium
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
